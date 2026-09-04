@@ -12,8 +12,15 @@ public class Database {
         students = new ArrayList<Student>();
     }
 
-    public void add(Student s){
+    public boolean add(Student s){
+        for(int i = 0; i < students.size(); i++){
+            if(students.get(i).getId() == s.getId()){
+
+                return false;
+            }
+        }
         students.add(s);
+        return true;
     }
 
     public void remove(int id){
