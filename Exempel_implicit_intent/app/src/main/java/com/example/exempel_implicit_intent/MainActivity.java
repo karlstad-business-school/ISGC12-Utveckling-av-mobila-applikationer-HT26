@@ -26,16 +26,48 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        Button tel = findViewById(R.id.button1);
+        tel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:123456789"));
+
+                if(intent.resolveActivity(getPackageManager()) != null){
+                    startActivity(intent);
+                }
+
+            }
+        });
+
         Button btn_email = findViewById(R.id.button2);
+        btn_email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("plain/text");
+                startActivity(Intent.createChooser(intent, "EEEEEEMAIL"));
+            }
+        });
 
 
 
         Button btn_activity = findViewById(R.id.button3);
+        btn_activity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String ACTION = "com.example.exempel_implicit.ABC";
+                Intent intent = new Intent();
+
+                intent.setAction(ACTION);
+                startActivity(intent);
+            }
+        });
 
 
 
 
-        Button tel = findViewById(R.id.button1);
+
 
     }
 }
