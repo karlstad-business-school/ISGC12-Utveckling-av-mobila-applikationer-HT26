@@ -1,5 +1,6 @@
 package com.example.hantera_studenter_v2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -69,5 +70,30 @@ public class MainActivity extends AppCompatActivity {
 
         TextView list = findViewById(R.id.student_list);
         list.setText(Database.instance.printStudents());
+    }
+
+
+
+
+    public void searchStudent(View view){
+        EditText idET = findViewById(R.id.search_id);
+        String idText = idET.getText().toString();
+        int id = Integer.parseInt(idText);
+
+
+        Intent intent = new Intent(MainActivity.this, StudentActivity.class);
+        intent.putExtra("id", id);
+
+        startActivity(intent);
+
+    }
+
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        TextView list = findViewById(R.id.student_list);
+        list.setText(Database.instance.printStudents());
+
     }
 }
