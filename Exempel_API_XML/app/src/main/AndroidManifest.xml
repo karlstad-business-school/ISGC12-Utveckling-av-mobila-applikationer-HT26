@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Exempel_background_service">
+        android:theme="@style/Theme.Exempel_API_XML">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -21,10 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <service android:name=".MyBackgroundService"/>
-
     </application>
 
 </manifest>
