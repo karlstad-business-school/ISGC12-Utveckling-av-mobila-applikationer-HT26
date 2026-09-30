@@ -1,4 +1,5 @@
-package com.example.exempel_api_xml;
+package com.example.exempel_api_xmlpullparser;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,17 +22,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.util.ArrayList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,14 +49,13 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-
-
         cityText = findViewById(R.id.tv_city);
         sunText = findViewById(R.id.tv_sun);
         setText = findViewById(R.id.tv_set);
         tempText = findViewById(R.id.tv_temp);
         cityET = findViewById(R.id.city_ET);
         searchButton = findViewById(R.id.search_btn);
+
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,47 +68,72 @@ public class MainActivity extends AppCompatActivity {
                 cityET.clearFocus();
             }
         });
-    }
 
+    }
 
     private void getData(){
         String city = "Karlstad";
         city = cityET.getText().toString();
 
+        URL url;
+        String apiString = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + API_KEY + "&mode=xml";
+
         try{
-            URL url;
-            url = new URL("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + API_KEY + "&mode=xml");
+            url = new URL(apiString);
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(url.openStream());
 
-            Element cityElement = (Element) document.getElementsByTagName("city").item(0);
-            String cityName = cityElement.getAttribute("name");
+            XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
+            XmlPullParser parser = parserCreator.newPullParser();
+            parser.setInput(url.openStream(), null);
 
-            Element countryElement = (Element) document.getElementsByTagName("country").item(0);
-            String countryCode = countryElement.getTextContent();
 
-            cityText.setText("City: " + cityName + " (" + countryCode + ")");
+            int parserEvent = parser.getEventType();
+            String tagName = "";
+            String countryCode = "";
+            String cityName = "";
 
-            Element temperatureElement = (Element) document.getElementsByTagName("temperature").item(0);
-            String temp = temperatureElement.getAttribute("value");
-            float tempFloat = Float.parseFloat(temp);
-            float celsius = tempFloat - 273.15f;
+            while(parserEvent != XmlPullParser.END_DOCUMENT){
+                if(parserEvent == XmlPullParser.START_TAG){
+                    tagName = parser.getName();
 
-            tempText.setText("Temperature: " + celsius + "C");
+                    if(tagName.equals("country")){
+                        countryCode = parser.nextText();
+                    }
 
-            Element sunElement = (Element) document.getElementsByTagName("sun").item(0);
-            String rise = sunElement.getAttribute("rise");
-            String set = sunElement.getAttribute("set");
+                    if(tagName.equals("city")){
+                        cityName = parser.getAttributeValue(null, "name");
+                        cityText.setText("City: " + cityName + countryCode);
+                    }
 
-            sunText.setText("Sun rise: " + rise);
-            setText.setText("Sun set: " + set);
+                    if(tagName.contains("sun")){
+                        String rise = parser.getAttributeValue(0);
+                        String set = parser.getAttributeValue(1);
 
-        }catch(Exception e){
-            e.printStackTrace();
-            Log.e("API_ERROR", e.toString());
+                        sunText.setText("Sun rise: " + rise);
+                        setText.setText("Sun set: " + set);
+                    }
+
+                    if(tagName.equals("temperature")){
+                        String temp = parser.getAttributeValue(null, "value");
+                        float tempFloat = Float.parseFloat(temp);
+                        float c = tempFloat - 273.15f;
+                        tempText.setText("Temperature: " + c + "C");
+                    }
+
+                }
+
+
+                parserEvent = parser.next();
+            }
+
+            if(countryCode.trim().isEmpty() == false && cityName.trim().isEmpty() == false){
+                cityText.setText("City: " + cityName + " (" + countryCode + ")");
+            }
+
+
+        } catch (Exception e) {
+            Log.e("Error", e.toString());
         }
-    }
 
+    }
 }
