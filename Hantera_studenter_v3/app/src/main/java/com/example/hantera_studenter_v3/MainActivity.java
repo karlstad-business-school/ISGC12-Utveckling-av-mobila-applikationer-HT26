@@ -44,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
         addBtn = findViewById(R.id.add_btn);
 
 
+        ArrayList<Student> students = new ArrayList<Student>();
+        students = DataManager.instance.readFromFile(this);
+        Database.instance.setStudents(students);
+
+
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
+                DataManager.instance.writeToFile(MainActivity.this, Database.instance.getStudents());
+
                 TextView list = findViewById(R.id.student_list);
                 list.setText(Database.instance.printStudents());
             }
@@ -72,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
         int id = Integer.parseInt(idText);
 
         Database.instance.remove(id);
+
+        DataManager.instance.writeToFile(MainActivity.this, Database.instance.getStudents());
+
 
         TextView list = findViewById(R.id.student_list);
         list.setText(Database.instance.printStudents());

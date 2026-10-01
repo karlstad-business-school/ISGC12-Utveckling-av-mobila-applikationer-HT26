@@ -60,4 +60,8 @@ public class Database {
         return this.students;
     }
 
+    public void setStudents(ArrayList<Student> s){
+        this.students = s;
+    }
+
 }
