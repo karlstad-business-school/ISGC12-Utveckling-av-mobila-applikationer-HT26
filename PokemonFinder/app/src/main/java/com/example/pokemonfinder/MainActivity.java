@@ -10,6 +10,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
+    //pokemon - https://pokeapi.co/api/v2/pokemon/bulbasaur
+    //list - https://pokeapi.co/api/v2/pokemon?limit=15&offset=0
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
